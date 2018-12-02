@@ -1,0 +1,56 @@
+<body>
+    hi
+    <input id=in type="text">
+</body>
+<script>
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+document.getElementById("in").onkeyup = function(e){
+  console.log(e.target.value)
+  if(e.target.value.length > 1){
+    postData(`/name/`, {search: e.target.value})
+    .then(data => console.log(data)) // JSON-string from `response.json()` call
+    .catch(error => console.error(error));
+  }
+}
+
+
+function postData(url = ``, data = {}) {
+  // Default options are marked with *
+    console.log(data)
+    return fetch(url, {
+        method: "POST", // *GET, POST, PUT, DELETE, etc.
+        mode: "cors", // no-cors, cors, *same-origin
+        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: "same-origin", // include, *same-origin, omit
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': getCookie('csrftoken'),
+            "Content-Type": "application/json; charset=utf-8",
+            "Accept": "application/json",
+            // "Content-Type": "application/x-www-form-urlencoded",
+        },
+        redirect: "follow", // manual, *follow, error
+        referrer: "no-referrer", // no-referrer, *client
+        body: JSON.stringify(data), // body data type must match "Content-Type" header
+        //data: data
+    })
+    .then(response => response.json()); // parses response to JSON
+}
+</script>
+
